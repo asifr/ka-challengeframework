@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>KAInterview</title>
+	<style type="text/css">
+	.left{float: left;width:700px;}
+	.right{float: left;width:300px;}
+	.CodeMirror{border:1px solid #BBB;}
+	td,th{text-align: center;padding:5px;}
+	th{border-bottom: 1px solid #CCC;}
+	#types{margin-top:2em;}
+
+	#messages li{display:none;}
+	#messages li.good:before {content: '✔'; margin-left: -1em; margin-right: 1em;color:green;}
+	#messages li.bad:before {content: '✗'; margin-left: -1em; margin-right: 1em;color:red;}
+	#messages li.good{display:block;color:green;}
+	#messages li.bad{display:block;color:red;}
+	ul#messages {text-indent:2px; list-style: none; list-style-position:outside; }
+
+	footer{clear:both;padding-top: 2em;}
+	</style>
+	<link rel="stylesheet" href="codemirror/lib/codemirror.css">
+</head>
+<body>
+
+<div class="left">
+<p>Student instructions: Create an array of integers up to N using a <code>for</code> loop, not a <code>while</code> loop.</p>
+<form>
+<textarea id="editor" rows="20" cols="80">N=10;
+function arr(N) {
+  x = [];
+  for (var i = 0; i < N; i++) {
+	  x[i] = i;
+	  if (x.length > 5) {
+	  	return x;
+	  }
+  };
+  return x
+}
+
+x = arr(N);
+</textarea>
+</form>
+
+<table cellpadding="0" cellspacing="0" id="types">
+	<tr>
+		<th></th>
+		<th>Required</th>
+		<th>Not allowed</th>
+		<th></th>
+	</tr>
+	<tr>
+		<td>If statement<br /><code>if() {}</code></td>
+		<td><input type="radio" name="IfStatement" value="1" checked></td>
+		<td><input type="radio" name="IfStatement" value="0"></td>
+		<td><a href="javascript:void(0);" onclick="javascript:$('input[name=IfStatement]').attr('checked',false);" class="clear">clear</a></td>
+	</tr>
+	<tr>
+		<td>For loop<br /><code>for() {}</code></td>
+		<td><input type="radio" name="ForStatement" value="1" checked></td>
+		<td><input type="radio" name="ForStatement" value="0"></td>
+		<td><a href="javascript:void(0);" onclick="javascript:$('input[name=ForStatement]').attr('checked',false);" class="clear">clear</a></td>
+	</tr>
+	<tr>
+		<td>While loop<br /><code>while() {}</code></td>
+		<td><input type="radio" name="WhileStatement" value="1"></td>
+		<td><input type="radio" name="WhileStatement" value="0" checked></td>
+		<td><a href="javascript:void(0);" onclick="javascript:$('input[name=WhileStatement]').attr('checked',false);" class="clear">clear</a></td>
+	</tr>
+	<tr>
+		<td>Expression statement<br /><code>foo = 10;</code></td>
+		<td><input type="radio" name="ExpressionStatement" value="1"></td>
+		<td><input type="radio" name="ExpressionStatement" value="0"></td>
+		<td><a href="javascript:void(0);" onclick="javascript:$('input[name=ExpressionStatement]').attr('checked',false);" class="clear">clear</a></td>
+	</tr>
+	<tr>
+		<td>Return statement<br /><code>return foo;</code></td>
+		<td><input type="radio" name="ReturnStatement" value="1"></td>
+		<td><input type="radio" name="ReturnStatement" value="0"></td>
+		<td><a href="javascript:void(0);" onclick="javascript:$('input[name=ReturnStatement]').attr('checked',false);" class="clear">clear</a></td>
+	</tr>
+	<tr>
+		<td>Function declaration<br /><code>function foo() {}</code></td>
+		<td><input type="radio" name="FunctionDeclaration" value="1"></td>
+		<td><input type="radio" name="FunctionDeclaration" value="0"></td>
+		<td><a href="javascript:void(0);" onclick="javascript:$('input[name=FunctionDeclaration]').attr('checked',false);" class="clear">clear</a></td>
+	</tr>
+	<tr>
+		<td>Function expression<br /><code>var foo = function() {}</code></td>
+		<td><input type="radio" name="FunctionExpression" value="1"></td>
+		<td><input type="radio" name="FunctionExpression" value="0"></td>
+		<td><a href="javascript:void(0);" onclick="javascript:$('input[name=FunctionExpression]').attr('checked',false);" class="clear">clear</a></td>
+	</tr>
+</table>
+
+</div>
+
+<div class="right">
+<ul id="messages">
+	<li data-type="IfStatement">If statement</li>
+	<li data-type="ForStatement">For loop</li>
+	<li data-type="WhileStatement">While loop</li>
+	<li data-type="ExpressionStatement">Expression statement</li>
+	<li data-type="ReturnStatement">Return statement</li>
+	<li data-type="FunctionDeclaration">Function declaration</li>
+	<li data-type="FunctionExpression">Function expression</li>
+	<li data-type="ArrowFunctionExpression">Arrow function expression</li>
+</ul>
+</div>
+
+<footer>
+	<p>Explanation: The interface analyzes student-generated JavaScript code to determine if aspects of the code is written as expected. The input to the system is the student-generated code and a list of functionality that are required or not allowed. The output is a green success message when the appropriate functionality is used and a red error message when a blacklisted functionality is used. The code is evaluated in real-time as the student writes for immediate feedback.</p>
+	<p>Features:</p>
+	<ul>
+		<li>A slight delay in analyzing the code makes the expensive operations of parsing the code and updating the messages list a little less expensive by waiting for the user to stop typing and than processing the entire code.</li>
+		<li>Changing the required and not allowed settings in the interface works as expected. It will reset the white and blacklists and erase the messages list. Clearing a selected option also works as expected.</li>
+		<li>The code parser searches for all occurrences of a functionality by doing a recursive search through the <code><a href="http://marijnhaverbeke.nl/acorn/">Acorn.js</a></code> output dictionary.</li>
+		<li>Messages for using a required functionality, for not using a required functionality, and for using blacklisted functionality.</li>
+	</ul>
+	<p>Possible improvements:</p>
+	<ul>
+		<li>We can use regular expressions to reduce overhead and allow the system to match specific code functionality.</li>
+		<li>Allow the system to check for nested functionality, like an if statement inside a for loop. Right now it only checks for if statements and for loops, although the API functionality exists.</li>
+	</ul>
+</footer>
+
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="delayed.js"></script>
+<script type="text/javascript" src="acorn.js"></script>
+<script type="text/javascript" src="walk.js"></script>
+<script type="text/javascript" src="acorn_loose.js"></script>
+<script type="text/javascript" src="utils.js"></script>
+<script type="text/javascript" src="CodeCheck.js"></script>
+<script type="text/javascript" src="codemirror/lib/codemirror.js"></script>
+<script src="codemirror/mode/javascript/javascript.js"></script>
+<script type="text/javascript">
+
+function updateTypes (req, blk) {
+	elms = $("#types input[type=radio]").filter(":checked");
+
+	for (var i = 0; i < elms.length; i++) {
+		if (elms[i].value == 1) { req[req.length] = elms[i].name; };
+		if (elms[i].value == 0) { blk[blk.length] = elms[i].name; };
+	};
+	return [req, blk];
+};
+
+// textarea
+var textarea = document.getElementById("editor");
+textarea.focus();
+
+// CodeMirror
+var cm = CodeMirror.fromTextArea(textarea, {mode: "javascript"});
+
+// initialize required and blacklisted types
+types = updateTypes([],[]);
+requiredTypes = types[0];
+blackListedTypes = types[1];
+delete types;
+
+// initialize CodeCheck objet
+CodeCheck.setInputEl(textarea).setRequiredTypes(requiredTypes).setBlackListedTypes(blackListedTypes);
+
+// track changes to types list
+var resetTypes = function(e){
+	types = updateTypes([],[]);
+	requiredTypes = types[0];
+	blackListedTypes = types[1];
+	delete types;
+	CodeCheck.setRequiredTypes(requiredTypes).setBlackListedTypes(blackListedTypes);
+	$("li").removeClass('good bad');
+};
+$("#types input").click(resetTypes);
+$(".clear").click(resetTypes);
+
+cm.on("keyup", Delayed(function(){
+	value = cm.getValue();
+	CodeCheck.setCode(value);
+	if (value.length) {
+		try {
+			tree = acorn.parse(this.value);
+			body = CodeCheck.scan(tree.body,[]); // flattened array
+			// console.log(tree);
+			// console.log(CodeCheck.regexText(/function.*for/gmi));
+			// console.log(CodeCheck.nestedIn(tree.body,[],[],0));
+
+			requiredTypes = CodeCheck.getRequiredTypes();
+			blackListedTypes = CodeCheck.getBlackListedTypes();
+
+			for (var i = 0; i < body.length; i++) {
+				if ($.inArray(body[i], requiredTypes) > -1) { // required type exists
+					console.log("GOOD: " + body[i] + " exists");
+					$("#messages li[data-type='"+body[i]+"']").html(CodeCheck.getMessage(body[i],'success')).removeClass('good bad').addClass('good');
+				};
+
+				if ($.inArray(body[i], blackListedTypes) > -1) { // black listed type exists
+					console.log("BAD: " + body[i] + " exists");
+					$("#messages li[data-type='"+body[i]+"']").html(CodeCheck.getMessage(body[i],'blacklisted')).removeClass('good bad').addClass('bad');
+				};
+			};
+			for (var i = 0; i < requiredTypes.length; i++) {
+				if ($.inArray(requiredTypes[i], body) == -1) { // required type doesn't exist
+					// send an alert that required type doesn't exist
+					$("#messages li[data-type='"+requiredTypes[i]+"']").html(CodeCheck.getMessage(requiredTypes[i],'missing')).removeClass('good bad').addClass('bad');
+				}
+			};
+			for (var i = 0; i < blackListedTypes.length; i++) {
+				if ($.inArray(blackListedTypes[i], body) == -1) { // black listed type doesn't exist
+					$("#messages li[data-type='"+blackListedTypes[i]+"']").removeClass('good bad');
+				}
+			};
+		} catch(e) {
+			console.log(e.message);
+		}
+	};
+},300));
+
+</script>
+
+</body>
+</html>
